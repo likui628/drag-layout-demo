@@ -8,11 +8,14 @@
       ref="moveableRef"
       :target="targets"
       :draggable="true"
+      :resizable="true"
       @click-group="onClickGroupMoveable"
       @drag="onDragMoveable"
       @drag-start="onDragStartMoveable"
       @drag-group-start="onDragGroupStartMoveable"
       @drag-group="onDragGroupMoveable"
+      @resize-start="onResizeStartMoveable"
+      @resize="onResizeMoveable"
     />
     <Selecto
       ref="selectoRef"
@@ -85,6 +88,26 @@ const onDragGroupMoveable = (e: any) => {
     target.style.transform = `translate(${frame.translate[0]}px, ${frame.translate[1]}px)`
   })
 }
+
+const onResizeStartMoveable = (e: any) => {
+  e.setOrigin(['%', '%'])
+  const target = e.target
+  const frame = frameMap.value.get(target)
+  e.dragStart && e.dragStart.set(frame.translate)
+}
+
+const onResizeMoveable = (e: any) => {
+  const beforeTranslate = e.drag.beforeTranslate
+
+  const target = e.target
+  const frame = frameMap.value.get(target)
+
+  frame.translate = beforeTranslate
+  e.target.style.width = `${e.width}px`
+  e.target.style.height = `${e.height}px`
+  e.target.style.transform = `translate(${beforeTranslate[0]}px, ${beforeTranslate[1]}px)`
+}
+
 // Selecto handler
 const onDragStartSelecto = (e: any) => {
   const moveable = moveableRef.value
@@ -109,7 +132,6 @@ const onSelectEndSelecto = (e: any) => {
 <style>
 .container {
   position: relative;
-  max-width: 800px;
   max-height: 800px;
   margin-top: 50px;
 }
@@ -131,6 +153,8 @@ const onSelectEndSelecto = (e: any) => {
 
 .selecto-area {
     padding: 20px;
+    width: 500px;
+    height: 500px;
 }
 
 .empty.elements {
