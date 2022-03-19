@@ -4,6 +4,7 @@
 
 declare module 'vue' {
   export interface GlobalComponents {
+    Comps: typeof import('./src/components/Comps.vue')['default']
   }
 }
 
