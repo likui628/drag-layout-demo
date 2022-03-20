@@ -37,6 +37,7 @@
       @drag-group="onDragGroupMoveable"
       @resize-start="onResizeStartMoveable"
       @resize="onResizeMoveable"
+      @resize-end="onResizeEndMoveable"
     />
     <Selecto
       ref="selectoRef"
@@ -157,13 +158,21 @@ const onResizeMoveable = (e: any) => {
   const frame = frameMap.value.get(target)
 
   frame.translate = beforeTranslate
-  const curr = comps.value.find(item => item.id === e.target.dataset.id)
-  if (curr) {
-    curr.width = e.width
-    curr.height = e.height
-  }
+
+  e.target.style.width = `${e.width}px`
+  e.target.style.height = `${e.height}px`
 
   e.target.style.transform = `translate(${beforeTranslate[0]}px, ${beforeTranslate[1]}px)`
+}
+
+const onResizeEndMoveable = ({ lastEvent }: any) => {
+  if (lastEvent) {
+    const curr = comps.value.find(item => item.id === lastEvent.target.dataset.id)
+    if (curr) {
+      curr.width = lastEvent.width
+      curr.height = lastEvent.height
+    }
+  }
 }
 
 // Selecto handler
