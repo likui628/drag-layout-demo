@@ -7,19 +7,17 @@
       @dragover.prevent
       @drop="onDrop"
     >
-      <div
-        v-for="(comp, index) in comps"
-        :key="index"
-        :style="{
-          width: comp.width + 'px',
-          height: comp.height + 'px',
-          left: comp.left + 'px',
-          top: comp.top + 'px',
-          'border-radius': comp.type === 'circle' ? '50%' : ''
-        }"
-        :data-id="comp.id"
-        class="cube target"
-      />
+      <template v-for="comp in comps" :key="comp.id">
+        <CompItem
+          :id="comp.id"
+          class="cube target"
+          :width="comp.width"
+          :height="comp.height"
+          :left="comp.left"
+          :top="comp.top"
+          :type="comp.type"
+        />
+      </template>
     </div>
     <div class="comps">
       <Comps />
@@ -95,13 +93,13 @@ const onClickGroupMoveable = (e: any) => {
 const onDragStartMoveable = (e: any) => {
   const target = e.target
 
+  const [x, y] = target.style.transform.match(/(\d+)/g)
   if (!frameMap.value.has(target)) {
     frameMap.value.set(target, {
-      translate: [0, 0],
+      translate: [Number(x), Number(y)],
     })
   }
   const frame = frameMap.value.get(target)
-
   e.set(frame.translate)
 }
 
@@ -117,13 +115,13 @@ const onDragGroupStartMoveable = (e: any) => {
   e.events.forEach((ev: any) => {
     const target = ev.target
 
+    const [x, y] = target.style.transform.match(/(\d+)/g)
     if (!frameMap.value.has(target)) {
       frameMap.value.set(target, {
-        translate: [0, 0],
+        translate: [Number(x), Number(y)],
       })
     }
     const frame = frameMap.value.get(target)
-
     ev.set(frame.translate)
   })
 }
