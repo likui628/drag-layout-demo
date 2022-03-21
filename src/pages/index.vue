@@ -1,26 +1,28 @@
 <template>
   <div class="container">
-    <div class="canvas">
-      <div
-        ref="canvasRef"
-        class="elements selecto-area"
-        :style="`transform:scale(${scale})`"
+    <div class="infinite-viewer-container">
+      <InfiniteViewer
+        ref="viewerRef"
+        class="elements infinite-viewer"
         @dragenter.prevent
         @dragover.prevent
         @drop="onDrop"
+        @scroll="onViewerScroll"
       >
-        <template v-for="comp in comps" :key="comp.id">
-          <CompItem
-            :id="comp.id"
-            class="cube target"
-            :width="comp.width"
-            :height="comp.height"
-            :left="comp.left"
-            :top="comp.top"
-            :type="comp.type"
-          />
-        </template>
-      </div>
+        <div ref="canvasRef" class="selecto-area">
+          <template v-for="comp in comps" :key="comp.id">
+            <CompItem
+              :id="comp.id"
+              class="cube target"
+              :width="comp.width"
+              :height="comp.height"
+              :left="comp.left"
+              :top="comp.top"
+              :type="comp.type"
+            />
+          </template>
+        </div>
+      </InfiniteViewer>
     </div>
 
     <div class="comps">
@@ -59,6 +61,7 @@
 import { ref, watch } from 'vue'
 import Moveable from 'vue3-moveable'
 import { VueSelecto as Selecto } from 'vue3-selecto'
+import { VueInfiniteViewer as InfiniteViewer } from 'vue3-infinite-viewer'
 import { v4 as uuidv4 } from 'uuid'
 import { useSelecto } from '~/composables/selecto'
 import { useMoveable } from '~/composables/moveable'
@@ -75,8 +78,13 @@ interface CompInterface {
 const scale = ref(1)
 const comps = ref<CompInterface[]>([])
 const canvasRef = ref<HTMLDivElement | null>(null)
+const viewerRef = ref<any>(null)
 const selectoRef = ref<any>(null)
 const moveableRef = ref<any>(null)
+
+const onViewerScroll = () => {
+  selectoRef.value.checkScroll()
+}
 
 const onDrop = (e: DragEvent) => {
   const rect = canvasRef.value?.getClientRects()[0]
@@ -140,16 +148,25 @@ watch([() => comps.value.length, targets], () => {
   margin-top: 50px;
   display: flex;
 }
-.canvas{
-  overflow: scroll;
+.elements {
+  margin-top: 40px;
+  border: 2px solid #eee;
+}
+
+.infinite-viewer-container{
+ width: 500px;
+  height: 500px;
+}
+
+.infinite-viewer {
+width: 100%;
+  height: 100%;
 }
 
 .selecto-area {
-  padding: 20px;
-  width: 500px;
-  height: 500px;
+  width: 100%;
+  height: 100%;
   margin-top: 40px;
-  border: 2px solid #eee;
 }
 .comps {
   margin-top: 40px;
