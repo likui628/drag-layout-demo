@@ -40,6 +40,7 @@
             @drag-start="onDragStartMoveable"
             @drag-group-start="onDragGroupStartMoveable"
             @drag-group="onDragGroupMoveable"
+            @drag-group-end="onDragGroupEndMoveable"
             @resize-start="onResizeStartMoveable"
             @resize="onResizeMoveable"
             @resize-end="onResizeEndMoveable"
@@ -117,11 +118,13 @@ const onDrop = (e: DragEvent) => {
 
 const {
   isResizing,
+  isGroupDragging,
   onClickGroup: onClickGroupMoveable,
   onDragStart: onDragStartMoveable,
   onDrag: onDragMoveable,
   onDragGroupStart: onDragGroupStartMoveable,
   onDragGroup: onDragGroupMoveable,
+  onDragGroupEnd: onDragGroupEndMoveable,
   onResizeStart: onResizeStartMoveable,
   onResize: onResizeMoveable,
   onResizeEnd: onResizeEndMoveable,
@@ -131,7 +134,7 @@ const {
   targets,
   onDragStart: onDragStartSelecto,
   onSelectEnd: onSelectEndSelecto,
-} = useSelecto(moveableRef, isResizing)
+} = useSelecto(moveableRef, isResizing, isGroupDragging)
 
 const guidelines = ref<HTMLDivElement[]>([])
 

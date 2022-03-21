@@ -6,6 +6,7 @@ export function useMoveable(
 ) {
   const frameMap = ref(new Map())
   const isResizing = ref(false)
+  const isGroupDragging = ref(false)
 
   const initTargetFrame = (target: any) => {
     const [x, y] = target.style.transform.match(/(\d+)/g)
@@ -37,6 +38,7 @@ export function useMoveable(
   }
 
   const onDragGroupStart = (e: any) => {
+    isGroupDragging.value = true
     e.events.forEach((ev: any) => {
       const target = ev.target
       initTargetFrame(target)
@@ -53,6 +55,11 @@ export function useMoveable(
       frame.translate = ev.beforeTranslate
       target.style.transform = `translate(${frame.translate[0]}px, ${frame.translate[1]}px)`
     })
+  }
+
+  const onDragGroupEnd = (e) => {
+    isGroupDragging.value = false
+    console.log(e)
   }
 
   const onResizeStart = (e: any) => {
@@ -91,11 +98,13 @@ export function useMoveable(
   }
   return {
     isResizing,
+    isGroupDragging,
     onClickGroup,
     onDragStart,
     onDrag,
     onDragGroupStart,
     onDragGroup,
+    onDragGroupEnd,
     onResizeStart,
     onResize,
     onResizeEnd,
