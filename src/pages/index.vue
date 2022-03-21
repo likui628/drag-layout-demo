@@ -1,24 +1,28 @@
 <template>
   <div class="container">
-    <div
-      ref="canvasRef"
-      class="elements selecto-area"
-      @dragenter.prevent
-      @dragover.prevent
-      @drop="onDrop"
-    >
-      <template v-for="comp in comps" :key="comp.id">
-        <CompItem
-          :id="comp.id"
-          class="cube target"
-          :width="comp.width"
-          :height="comp.height"
-          :left="comp.left"
-          :top="comp.top"
-          :type="comp.type"
-        />
-      </template>
+    <div class="canvas">
+      <div
+        ref="canvasRef"
+        class="elements selecto-area"
+        :style="`transform:scale(${scale})`"
+        @dragenter.prevent
+        @dragover.prevent
+        @drop="onDrop"
+      >
+        <template v-for="comp in comps" :key="comp.id">
+          <CompItem
+            :id="comp.id"
+            class="cube target"
+            :width="comp.width"
+            :height="comp.height"
+            :left="comp.left"
+            :top="comp.top"
+            :type="comp.type"
+          />
+        </template>
+      </div>
     </div>
+
     <div class="comps">
       <Comps />
     </div>
@@ -68,6 +72,7 @@ interface CompInterface {
   top: number
 }
 
+const scale = ref(1)
 const comps = ref<CompInterface[]>([])
 const canvasRef = ref<HTMLDivElement | null>(null)
 const selectoRef = ref<any>(null)
@@ -77,13 +82,16 @@ const onDrop = (e: DragEvent) => {
   const rect = canvasRef.value?.getClientRects()[0]
   if (rect) {
     const type = e.dataTransfer?.getData('text/html') || 'rect'
-    const left = e.clientX - rect.left
-    const top = e.clientY - rect.top
+    const width = type === 'rect' ? 60 : 40
+    const height = 40
+    const left = (e.clientX - rect.left - width / 2) / scale.value
+    const top = (e.clientY - rect.top - height / 2) / scale.value
+
     comps.value.push({
       id: uuidv4(),
       type,
-      width: type === 'rect' ? 60 : 40,
-      height: 40,
+      width,
+      height,
       top,
       left,
     })
@@ -132,6 +140,10 @@ watch([() => comps.value.length, targets], () => {
   margin-top: 50px;
   display: flex;
 }
+.canvas{
+  overflow: scroll;
+}
+
 .selecto-area {
   padding: 20px;
   width: 500px;
