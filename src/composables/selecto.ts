@@ -1,12 +1,12 @@
 import type { Ref } from 'vue'
 
-export function useSelecto(moveableRef: Ref<any>) {
+export function useSelecto(moveableRef: Ref<any>, isResizing: Ref<boolean>) {
   const targets = ref<HTMLDivElement[]>([])
 
   const onDragStart = (e: any) => {
     const moveable = moveableRef.value
     const target = e.inputEvent.target
-    if (moveable.isMoveableElement(target)
+    if (isResizing.value || moveable.isMoveableElement(target)
       || targets.value.some(t => t === target
         || t.contains(target)))
       e.stop()

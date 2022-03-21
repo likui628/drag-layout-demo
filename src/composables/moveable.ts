@@ -5,6 +5,7 @@ export function useMoveable(
   comps: Ref<{ id: string; width: number; height: number }[]>,
 ) {
   const frameMap = ref(new Map())
+  const isResizing = ref(false)
 
   const initTargetFrame = (target: any) => {
     const [x, y] = target.style.transform.match(/(\d+)/g)
@@ -55,6 +56,7 @@ export function useMoveable(
   }
 
   const onResizeStart = (e: any) => {
+    isResizing.value = true
     e.setOrigin(['%', '%'])
     const target = e.target
     initTargetFrame(target)
@@ -78,6 +80,7 @@ export function useMoveable(
   }
 
   const onResizeEnd = ({ lastEvent }: any) => {
+    isResizing.value = false
     if (lastEvent) {
       const curr = comps.value.find(item => item.id === lastEvent.target.dataset.id)
       if (curr) {
@@ -87,6 +90,7 @@ export function useMoveable(
     }
   }
   return {
+    isResizing,
     onClickGroup,
     onDragStart,
     onDrag,

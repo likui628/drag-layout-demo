@@ -116,6 +116,7 @@ const onDrop = (e: DragEvent) => {
 }
 
 const {
+  isResizing,
   onClickGroup: onClickGroupMoveable,
   onDragStart: onDragStartMoveable,
   onDrag: onDragMoveable,
@@ -130,7 +131,7 @@ const {
   targets,
   onDragStart: onDragStartSelecto,
   onSelectEnd: onSelectEndSelecto,
-} = useSelecto(moveableRef)
+} = useSelecto(moveableRef, isResizing)
 
 const guidelines = ref<HTMLDivElement[]>([])
 
