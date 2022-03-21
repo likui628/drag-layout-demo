@@ -1,6 +1,11 @@
 <template>
   <div class="container">
-    <div class="infinite-viewer-container">
+    <div class="toolbox">
+      <button @click="onScrollCenter">
+        Scroll Center
+      </button>
+    </div>
+    <div class="main">
       <InfiniteViewer
         ref="viewerRef"
         class="elements infinite-viewer"
@@ -21,39 +26,39 @@
               :type="comp.type"
             />
           </template>
+          <Moveable
+            ref="moveableRef"
+            :target="targets"
+            :draggable="true"
+            :resizable="true"
+            :snappable="true"
+            :element-guidelines="guidelines"
+            :is-display-snap-digit="false"
+            :scrollable="true"
+            @click-group="onClickGroupMoveable"
+            @drag="onDragMoveable"
+            @drag-start="onDragStartMoveable"
+            @drag-group-start="onDragGroupStartMoveable"
+            @drag-group="onDragGroupMoveable"
+            @resize-start="onResizeStartMoveable"
+            @resize="onResizeMoveable"
+            @resize-end="onResizeEndMoveable"
+          />
+          <Selecto
+            ref="selectoRef"
+            drag-container=".elements"
+            :selectable-targets="['.target']"
+            :toggle-continue-select="['shift']"
+            @drag-start="onDragStartSelecto"
+            @select-end="onSelectEndSelecto"
+          />
         </div>
       </InfiniteViewer>
-    </div>
 
-    <div class="comps">
-      <Comps />
+      <div class="comps">
+        <Comps />
+      </div>
     </div>
-
-    <Moveable
-      ref="moveableRef"
-      :target="targets"
-      :draggable="true"
-      :resizable="true"
-      :snappable="true"
-      :element-guidelines="guidelines"
-      :is-display-snap-digit="false"
-      @click-group="onClickGroupMoveable"
-      @drag="onDragMoveable"
-      @drag-start="onDragStartMoveable"
-      @drag-group-start="onDragGroupStartMoveable"
-      @drag-group="onDragGroupMoveable"
-      @resize-start="onResizeStartMoveable"
-      @resize="onResizeMoveable"
-      @resize-end="onResizeEndMoveable"
-    />
-    <Selecto
-      ref="selectoRef"
-      drag-container=".elements"
-      :selectable-targets="['.target']"
-      :toggle-continue-select="['shift']"
-      @drag-start="onDragStartSelecto"
-      @select-end="onSelectEndSelecto"
-    />
   </div>
 </template>
 
@@ -81,6 +86,10 @@ const canvasRef = ref<HTMLDivElement | null>(null)
 const viewerRef = ref<any>(null)
 const selectoRef = ref<any>(null)
 const moveableRef = ref<any>(null)
+
+const onScrollCenter = () => {
+  viewerRef.value.scrollCenter()
+}
 
 const onViewerScroll = () => {
   selectoRef.value.checkScroll()
@@ -144,32 +153,36 @@ watch([() => comps.value.length, targets], () => {
 <style>
 .container {
   position: relative;
-  max-height: 800px;
-  margin-top: 50px;
   display: flex;
+  flex-direction: column;
+  margin: 20px;
 }
+
+.toolbox {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+}
+
+.main {
+  display: flex;
+  padding: 10px;
+}
+
 .elements {
-  margin-top: 40px;
   border: 2px solid #eee;
 }
 
-.infinite-viewer-container{
- width: 500px;
-  height: 500px;
-}
-
 .infinite-viewer {
-width: 100%;
-  height: 100%;
+  width: 500px;
+  height: 500px;
 }
 
 .selecto-area {
   width: 100%;
   height: 100%;
-  margin-top: 40px;
 }
 .comps {
-  margin-top: 40px;
   padding: 20px;
   width: 100px;
   height: 500px;
