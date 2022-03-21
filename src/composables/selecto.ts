@@ -14,6 +14,7 @@ export function useSelecto(moveableRef: Ref<any>) {
 
   const onSelectEnd = (e: any) => {
     const moveable = moveableRef.value
+
     targets.value = [...e.selected]
 
     if (e.isDragStart) {

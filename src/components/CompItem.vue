@@ -1,6 +1,7 @@
 <template>
   <div
     ref="el"
+    :class="props.type"
     style="left:0;top:0"
     :style="{
       width: props.width + 'px',

@@ -28,6 +28,9 @@
       :target="targets"
       :draggable="true"
       :resizable="true"
+      :snappable="true"
+      :element-guidelines="guidelines"
+      :is-display-snap-digit="false"
       @click-group="onClickGroupMoveable"
       @drag="onDragMoveable"
       @drag-start="onDragStartMoveable"
@@ -49,7 +52,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import Moveable from 'vue3-moveable'
 import { VueSelecto as Selecto } from 'vue3-selecto'
 import { v4 as uuidv4 } from 'uuid'
@@ -103,6 +106,23 @@ const {
   onDragStart: onDragStartSelecto,
   onSelectEnd: onSelectEndSelecto,
 } = useSelecto(moveableRef)
+
+const guidelines = ref<HTMLDivElement[]>([])
+
+watch([() => comps.value.length, targets], () => {
+  nextTick(() => {
+    guidelines.value = []
+    const targetIds = targets.value.map(item => item.dataset.id)
+
+    const nodeList = document.querySelectorAll('.target')
+    const tempList = Array.from(nodeList) as HTMLDivElement[]
+
+    tempList.filter(item => !targetIds.includes(item.dataset.id))
+      .forEach((node) => {
+        guidelines.value.push(node)
+      })
+  })
+}, { deep: true })
 </script>
 
 <style>
